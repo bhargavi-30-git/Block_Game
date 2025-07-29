@@ -1,0 +1,26 @@
+*{
+    margin: 0;
+    padding:0;
+    box-sizing:border-box;
+  
+}
+body{
+    background-color: pink;
+    display:flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column ;
+    height: 100vh;
+    /* padding-bottom: 40px; */
+    /* overflow:hidden; */
+}
+h2 {
+    margin-top: 5px;
+    margin-bottom: 5px; /* ✅ space below heading */
+}
+
+#block{
+    background-color: whitesmoke;
+    box-shadow: 0 0 10px 0 lightgray;
+    /* margin-bottom: 100px; */
+}
