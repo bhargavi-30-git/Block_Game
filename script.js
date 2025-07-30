@@ -51,15 +51,17 @@ const COLORS =[
 const ROWS = 18;
 const COLS = 10;
 
+//canvas setup
 let canvas=document.querySelector("#block");
 let scoreboard =document.querySelector("h2");
 //ctx as drawing pen cnavas as drawing board
 let ctx=canvas.getContext("2d"); //2d drawing bpoard
+
 ctx.scale(30,30);
 
-let pieceObject=null;
-let grid=generateGrid();
-let score=0;
+let pieceObject=null; //current falling piece
+let grid=generateGrid(); //game board ROWSx COLS
+let score=0; 
 console.log(grid);
 
 // generating for our memeory
@@ -70,15 +72,15 @@ function generateRandomPiece(){
     let colorIndex =ran+1;
     let x=4;
     let y=0;
-    return {piece,x,y,colorIndex};
+    return {piece,x,y,colorIndex}; //returns pieceObejt
 }
 
-setInterval(newGameState,500);
+setInterval(newGameState,500); //game clock
 function newGameState(){
-    checkGrid();
+    checkGrid(); //Checks for any completely filled rows in the grid.
     if(pieceObject == null){
-        pieceObject=generateRandomPiece();
-        renderPiece();
+        pieceObject=generateRandomPiece(); //generates new random piece
+        renderPiece(); //draws the new piece on the canvas
     }
     moveDown();
 }
@@ -94,7 +96,7 @@ function checkGrid(){
         }
         if(allfilled){
             grid.splice(i,1); //delete the full row
-            grid.unshift([0,0,0,0,0,0,0,0,0,0]);
+            grid.unshift([0,0,0,0,0,0,0,0,0,0]); //add empty row at the top
             count++;
         }
     }
@@ -108,13 +110,13 @@ function checkGrid(){
     }else if(count >3 ){
         score+=50;
     }
-    scoreboard.innerHTML = "Score: "+ score;
+    scoreboard.innerHTML = "Score: "+ score; //updates score and display in h2 tag
 }
 
 
 //showing piece on UI
 function renderPiece(){
-    let piece= pieceObject.piece;
+    let piece= pieceObject.piece; //gets 2d array of falling block
     for(let i=0;i<piece.length;i++){
         for(let j=0;j<piece[i].length;j++){
             if(piece[i][j]==1){
@@ -150,7 +152,7 @@ function moveDown(){
         }
         pieceObject=null;
     }
-    renderGrid(); 
+    renderGrid(); //for redrwing canvas
 }
 
 function moveLeft(){
@@ -171,22 +173,29 @@ function moveRight(){
 function rotate(){
     let rotatedPiece =[];
     let piece=pieceObject.piece;
+
+    //creates an empty matrix of the same size as the
     for(let i=0;i<piece.length;i++){
         rotatedPiece.push([]);
         for(let j=0;j<piece[i].length;j++){
             rotatedPiece[i].push(0);
         }
     }
+
     //transpose
     for(let i=0;i<piece.length;i++){
         for(let j=0;j<piece[i].length;j++){
             rotatedPiece[i][j]=piece[j][i];
         }
     }
+
+    //Reversing each row after transpose gives a 90° clockwise rotation
     for(let i=0;i<rotatedPiece.length;i++){
         rotatedPiece[i]=rotatedPiece[i].reverse();
     }
 
+    //check for any collisions before applying the rotation to ensure 
+    // the piece doesn’t go out of bounds or overlap. 
     if(!collision(pieceObject.x,pieceObject.y,rotatedPiece))
         pieceObject.piece=rotatedPiece;
     renderGrid();
@@ -195,7 +204,8 @@ function rotate(){
 
 //to stop the pices at the boders
 function collision(x,y,rotatedPiece){
-    let piece= rotatedPiece||pieceObject.piece;
+    let piece= rotatedPiece || pieceObject.piece;
+
      for(let i=0;i<piece.length;i++){
         for(let j=0;j<piece[i].length;j++){
             if(piece[i][j]==1){
@@ -205,10 +215,10 @@ function collision(x,y,rotatedPiece){
                 if(p>=0 && p<COLS && q>=0 && q<ROWS ){
                     //we are inside the canvas
                     if(grid[q][p]>0){
-                        return true;
+                        return true; //collision inside the canvas
                     }
                 }else{
-                    //collision happens
+                    //collision happens outside the grid
                     return true;
                 }
             }
@@ -217,8 +227,10 @@ function collision(x,y,rotatedPiece){
     return false;
 }
 
+//creates empty game board
 function generateGrid(){
     let grid = [];
+    
     for(let i=0;i<ROWS;i++){
         grid.push([]);
         for(let j=0;j<COLS;j++){
@@ -244,6 +256,7 @@ function renderGrid(){
 document.addEventListener("keydown",function(e){
     console.log("Key pressed:", e.code);
     let key=e.code;
+
     if(key == "ArrowDown"){
         moveDown();
     }else if(key == "ArrowLeft"){
